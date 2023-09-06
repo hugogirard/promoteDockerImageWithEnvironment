@@ -10,7 +10,8 @@ jobs:
   build-node-app-image:
 
     runs-on: ubuntu-latest
-
+    environment: DEV
+    
     steps:
       - name: Checkout source code 
         uses: actions/checkout@v3
