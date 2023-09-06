@@ -12,16 +12,16 @@ var suffix = uniqueString(subscription().subscriptionId)
 
 var configuration = [
   {
-    'rgName': 'rg-dev-${suffix}'
-    'acrName': 'acrdev${suffix}'    
+    rgName: 'rg-dev-${suffix}'
+    acrName: 'acrdev${suffix}'    
   }
   {
-    'rgName': 'rg-qa-${suffix}'
-    'acrName': 'acrqa${suffix}'    
+    rgName: 'rg-qa-${suffix}'
+    acrName: 'acrqa${suffix}'    
   }
   {
-    'rgName': 'rg-prod-${suffix}'
-    'acrName': 'acrprod${suffix}'        
+    rgName: 'rg-prod-${suffix}'
+    acrName: 'acrprod${suffix}'        
   }
 ]
 
