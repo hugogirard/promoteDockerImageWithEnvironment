@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: DEV
-    
+
     steps:
       - name: Checkout source code 
         uses: actions/checkout@v3
@@ -31,6 +31,7 @@ jobs:
 
       - name: Build docker image
         run: |          
+          az acr login --name ${{ secrets.REGISTRY_SERVER }}        
           docker build -t ${{ env.IMAGE_NAME }} .
           docker push ${{ env.IMAGE_NAME }}
         working-directory: ./src  
