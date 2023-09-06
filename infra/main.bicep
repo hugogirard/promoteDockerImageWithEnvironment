@@ -61,6 +61,24 @@ module rbacAcrDev 'modules/rbac/rbac.bicep' = {
   }
 }
 
+module rbacAcrQa 'modules/rbac/rbac.bicep' = {
+  scope: resourceGroup(rgQA.name)
+  name: 'rbacAcrQa'
+  params: {
+    acrName: acrQa.outputs.acrName
+    objectId: spObjectId
+  }
+}
+
+module rbacAcrProd 'modules/rbac/rbac.bicep' = {
+  scope: resourceGroup(rgProd.name)
+  name: 'rbacAcrProd'
+  params: {
+    acrName: acrProd.outputs.acrName
+    objectId: spObjectId
+  }
+}
+
 module acrQa 'modules/acr/acr.bicep' = {
   scope: resourceGroup(rgQA.name)
   name: configuration[1].acrName
