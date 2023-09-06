@@ -31,4 +31,74 @@ jobs:
           deploymentName: ${{ env.DEPLOYMENT_NAME }}
           template: ./infra/main.bicep
           parameters: adminGroupId=${{ secrets.ADMIN_GROUP_ID }}
+
+      - uses: gliech/create-github-secret-action@v1
+        name: Write AKS Dev Name
+        with:
+          name: AKS_DEV_NAME
+          value: ${{ steps.createResources.outputs.aksDevName }}
+          pa_token: ${{ secrets.PA_TOKEN }}
+
+      - uses: gliech/create-github-secret-action@v1
+        name: Write AKS QA Name
+        with:
+          name: AKS_QA_NAME
+          value: ${{ steps.createResources.outputs.aksQaName }}
+          pa_token: ${{ secrets.PA_TOKEN }}    
+          
+      - uses: gliech/create-github-secret-action@v1
+        name: Write AKS Prod Name
+        with:
+          name: AKS_PROD_NAME
+          value: ${{ steps.createResources.outputs.aksProdName }}
+          pa_token: ${{ secrets.PA_TOKEN }}    
+          
+      - uses: gliech/create-github-secret-action@v1
+        name: Write ACR Dev Name
+        with:
+          name: ACR_DEV_NAME
+          value: ${{ steps.createResources.outputs.acrDevName }}
+          pa_token: ${{ secrets.PA_TOKEN }}
+  
+      - uses: gliech/create-github-secret-action@v1
+        name: Write ACR QA Name
+        with:
+          name: ACR_QA_NAME
+          value: ${{ steps.createResources.outputs.acrQaName }}
+          pa_token: ${{ secrets.PA_TOKEN }}    
+            
+      - uses: gliech/create-github-secret-action@v1
+        name: Write ACR Prod Name
+        with:
+          name: ACR_PROD_NAME
+          value: ${{ steps.createResources.outputs.acrProdName }}
+          pa_token: ${{ secrets.PA_TOKEN }}   
+
+      - uses: gliech/create-github-secret-action@v1
+        name: Write RG Dev Name
+        with:
+          name: RG_DEV_NAME
+          value: ${{ steps.createResources.outputs.rgDevName }}
+          pa_token: ${{ secrets.PA_TOKEN }}
+    
+      - uses: gliech/create-github-secret-action@v1
+        name: Write RG QA Name
+        with:
+          name: RG_QA_NAME
+          value: ${{ steps.createResources.outputs.rgQaName }}
+          pa_token: ${{ secrets.PA_TOKEN }}    
+              
+      - uses: gliech/create-github-secret-action@v1
+        name: Write RG Prod Name
+        with:
+          name: RG_PROD_NAME
+          value: ${{ steps.createResources.outputs.rgProdName }}
+          pa_token: ${{ secrets.PA_TOKEN }}                      
+
+      - name: Attach ACR
+        run: |
+          az aks update -n ${{ steps.createResources.outputs.aksDevName }} -g ${{ steps.createResources.outputs.rgDevName }} --attach-acr ${{ steps.createResources.outputs.aksDevName }}
+          az aks update -n ${{ steps.createResources.outputs.aksQaName }} -g ${{ steps.createResources.outputs.rgQaName }} --attach-acr ${{ steps.createResources.outputs.aksQaName }}
+          az aks update -n ${{ steps.createResources.outputs.aksProdName }} -g ${{ steps.createResources.outputs.rgProdName }} --attach-acr ${{ steps.createResources.outputs.aksProdName }}
+
                     

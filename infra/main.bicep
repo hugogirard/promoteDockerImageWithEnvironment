@@ -111,3 +111,9 @@ output acrQaName string = acrQa.outputs.acrName
 output acrProdName string = acrProd.outputs.acrName
 
 output aksDevName string = aksDev.outputs.aksName
+output aksQaName string = aksQa.outputs.aksName
+output aksProdName string = aksProd.outputs.aksName
+
+output rgDevName string = rgDev.name
+output rgQaName string = rgQA.name
+output rgProdName string = rgProd.name
