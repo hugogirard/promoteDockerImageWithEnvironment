@@ -80,3 +80,10 @@ module aksDev 'modules/aks/aks.bicep' = {
     adminGroupId: adminGroupId
   }
 }
+
+
+output acrDevName string = acrDev.outputs.acrName
+output acrQaName string = acrQa.outputs.acrName
+output acrProdName string = acrProd.outputs.acrName
+
+output aksDevName string = aksDev.outputs.aksName

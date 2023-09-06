@@ -28,7 +28,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2023-06-01' = {
     ]
     disableLocalAccounts: false
     networkProfile: {
-      loadBalancerSku: 'standard'
+      loadBalancerSku: 'Standard'
       networkPlugin: 'kubenet'
     }
     autoUpgradeProfile: {
@@ -52,3 +52,6 @@ resource aks 'Microsoft.ContainerService/managedClusters@2023-06-01' = {
     }       
   }  
 }
+
+
+output aksName string = aks.name
