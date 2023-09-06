@@ -97,8 +97,8 @@ jobs:
 
       - name: Attach ACR
         run: |
-          az aks update -n ${{ steps.createResources.outputs.aksDevName }} -g ${{ steps.createResources.outputs.rgDevName }} --attach-acr ${{ steps.createResources.outputs.aksDevName }}
-          az aks update -n ${{ steps.createResources.outputs.aksQaName }} -g ${{ steps.createResources.outputs.rgQaName }} --attach-acr ${{ steps.createResources.outputs.aksQaName }}
-          az aks update -n ${{ steps.createResources.outputs.aksProdName }} -g ${{ steps.createResources.outputs.rgProdName }} --attach-acr ${{ steps.createResources.outputs.aksProdName }}
+          az aks update -n ${{ steps.createResources.outputs.aksDevName }} -g ${{ steps.createResources.outputs.rgDevName }} --attach-acr ${{ steps.createResources.outputs.acrDevName }}
+          az aks update -n ${{ steps.createResources.outputs.aksQaName }} -g ${{ steps.createResources.outputs.rgQaName }} --attach-acr ${{ steps.createResources.outputs.acrQaName }}
+          az aks update -n ${{ steps.createResources.outputs.aksProdName }} -g ${{ steps.createResources.outputs.rgProdName }} --attach-acr ${{ steps.createResources.outputs.acrProdName }}
 
                     
