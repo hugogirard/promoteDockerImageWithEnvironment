@@ -33,6 +33,13 @@ jobs:
           parameters: adminGroupId=${{ secrets.ADMIN_GROUP_ID }}
 
       - uses: gliech/create-github-secret-action@v1
+        name: Write REGISTRY_SERVER Dev Name
+        with:
+          name: REGISTRY_SERVER
+          value: ${{ steps.createResources.outputs.acrFqdn }}
+          pa_token: ${{ secrets.PA_TOKEN }}
+
+      - uses: gliech/create-github-secret-action@v1
         name: Write AKS Dev Name
         with:
           name: AKS_DEV_NAME

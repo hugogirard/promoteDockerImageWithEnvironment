@@ -105,7 +105,7 @@ module aksProd 'modules/aks/aks.bicep' = {
 }
 
 
-
+output acrFqdn string = '${acrDev.outputs.acrName}.azurecr.io'
 output acrDevName string = acrDev.outputs.acrName
 output acrQaName string = acrQa.outputs.acrName
 output acrProdName string = acrProd.outputs.acrName
