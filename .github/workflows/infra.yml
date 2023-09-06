@@ -1,0 +1,34 @@
+name: Create Azure Resources
+
+on:
+  workflow_dispatch:    
+
+jobs:
+  create-azure-resources:
+
+    env:
+      DEPLOYMENT_NAME: acr-promote-deployment      
+      LOCATION: canadacentral
+
+    runs-on: ubuntu-latest
+
+    steps:
+      
+      - uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: deploy
+        id: createResources
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          scope: subscription
+          region: ${{ env.LOCATION }}
+          deploymentName: ${{ env.DEPLOYMENT_NAME }}
+          template: ./infra/main.bicep
+               
+                    
