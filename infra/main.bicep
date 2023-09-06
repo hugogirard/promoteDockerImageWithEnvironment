@@ -6,6 +6,8 @@ param location string = 'canadacentral'
 
 @secure()
 param adminGroupId string 
+@secure()
+param spObjectId string
 
 
 var suffix = uniqueString(subscription().subscriptionId)
@@ -47,6 +49,15 @@ module acrDev 'modules/acr/acr.bicep' = {
     env: 'dev'
     location: location
     suffix: suffix
+  }
+}
+
+module rbacAcrDev 'modules/rbac/rbac.bicep' = {
+  scope: resourceGroup(rgDev.name)
+  name: 'rbacAcrDev'
+  params: {
+    acrName: acrDev.outputs.acrName
+    objectId: spObjectId
   }
 }
 

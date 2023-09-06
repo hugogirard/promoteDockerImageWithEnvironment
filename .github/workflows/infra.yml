@@ -30,7 +30,7 @@ jobs:
           region: ${{ env.LOCATION }}
           deploymentName: ${{ env.DEPLOYMENT_NAME }}
           template: ./infra/main.bicep
-          parameters: adminGroupId=${{ secrets.ADMIN_GROUP_ID }}
+          parameters: adminGroupId=${{ secrets.ADMIN_GROUP_ID }} spObjectId=${{ secrets.SERVICE_PRINCIPAL_ID }}
 
       - uses: gliech/create-github-secret-action@v1
         name: Write REGISTRY_SERVER Dev Name
