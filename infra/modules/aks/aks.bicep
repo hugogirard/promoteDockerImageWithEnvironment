@@ -1,6 +1,7 @@
 param location string
 param env string
 param suffix string
+param adminGroupId string
 
 resource aks 'Microsoft.ContainerService/managedClusters@2023-06-01' = {
   name: 'aks-${env}-${suffix}'
@@ -16,13 +17,16 @@ resource aks 'Microsoft.ContainerService/managedClusters@2023-06-01' = {
       {
         name: 'agentpool'
         count: 1
-        enableAutoScaling: false
-        vmSize: 'Standard_D2_v2'
+        vmSize: 'Standard_B4ms'
+        mode: 'System'        
         osType: 'Linux'
-        mode: 'System'
-        enableNodePublicIP: false
+        osDiskSizeGB: 30        
+        type: 'VirtualMachineScaleSets'
+        maxPods: 110
+        enableNodePublicIP: false   
       }
     ]
+    disableLocalAccounts: false
     networkProfile: {
       loadBalancerSku: 'standard'
       networkPlugin: 'kubenet'
@@ -32,10 +36,19 @@ resource aks 'Microsoft.ContainerService/managedClusters@2023-06-01' = {
     }
     aadProfile: {
       managed: true
+      tenantID: subscription().tenantId
       adminGroupObjectIDs: [
-        '00000000-0000-0000-0000-000000000000'
+        adminGroupId
       ]
       enableAzureRBAC: false
-    }    
+    } 
+    apiServerAccessProfile: {
+      enablePrivateCluster: false
+    }
+    addonProfiles: {
+      azurePolicy: {
+        enabled: false
+      }      
+    }       
   }  
 }

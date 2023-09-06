@@ -4,6 +4,9 @@ targetScope = 'subscription'
 @description('Primary location for all resources')
 param location string = 'canadacentral'
 
+@secure()
+param adminGroupId string 
+
 
 var suffix = uniqueString(subscription().subscriptionId)
 
@@ -74,5 +77,6 @@ module aksDev 'modules/aks/aks.bicep' = {
     env: 'dev'
     location: location
     suffix: suffix
+    adminGroupId: adminGroupId
   }
 }
