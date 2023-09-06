@@ -81,6 +81,30 @@ module aksDev 'modules/aks/aks.bicep' = {
   }
 }
 
+module aksQa 'modules/aks/aks.bicep' = {
+  scope: resourceGroup(rgQA.name)
+  name: 'aksQa'
+  params: {
+    env: 'qa'
+    location: location
+    suffix: suffix
+    adminGroupId: adminGroupId
+  }
+}
+
+
+module aksProd 'modules/aks/aks.bicep' = {
+  scope: resourceGroup(rgProd.name)
+  name: 'aksProd'
+  params: {
+    env: 'prod'
+    location: location
+    suffix: suffix
+    adminGroupId: adminGroupId
+  }
+}
+
+
 
 output acrDevName string = acrDev.outputs.acrName
 output acrQaName string = acrQa.outputs.acrName
