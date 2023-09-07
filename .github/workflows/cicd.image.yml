@@ -36,7 +36,7 @@ jobs:
         run: |                          
           echo ${{ secrets.SP_PASSWD }} | docker login ${{ secrets.REGISTRY_SERVER }} --username ${{ secrets.SP_APP_ID }} --password-stdin
           docker build -t ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }} .
-          docker push ${{ env.IMAGE_NAME }}
+          docker push ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }}
         working-directory: ./src  
     
       - name: Deploy to container registry
@@ -84,7 +84,7 @@ jobs:
           tokenSuffix: '__'
           files: '["**/deployment.yml"]'
         env:
-          image: ${{ env.IMAGE_NAME }}
+          image: ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }}
           version: ${{ github.sha }}
           environment: 'dev'
 
