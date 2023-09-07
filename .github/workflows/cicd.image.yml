@@ -30,8 +30,8 @@ jobs:
     #       password: ${{ secrets.REGISTRY_PASSWORD }}           
 
       - name: Build docker image
-        run: |          
-          az acr login --name ${{ secrets.REGISTRY_SERVER }}        
+        run: |                          
+          docker login ${{ secrets.REGISTRY_SERVER }} --username ${{ secrets.SP_APP_ID }} --password ${{ secrets.SP_PASSWD }}
           docker build -t ${{ env.IMAGE_NAME }} .
           docker push ${{ env.IMAGE_NAME }}
         working-directory: ./src  
