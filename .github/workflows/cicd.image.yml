@@ -113,53 +113,129 @@ jobs:
         
   deploy-qa:          
     
-        needs: push-image-qa
+    needs: push-image-qa
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout source code 
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup kubectl
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3
+  
+      - uses: azure/use-kubelogin@v1
+        with:
+          kubelogin-version: 'v0.0.31'  
+          
+      - name: Set AKS context
+        id: set-context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: '${{ secrets.RG_QA_NAME }}'
+          cluster-name: '${{ secrets.AKS_QA_NAME }}' 
+          admin: false
+          use-kubelogin: true
+          
+      - uses: cschleiden/replace-tokens@v1
+        name: Replace image in deployment
+        with:
+          tokenPrefix: '__'
+          tokenSuffix: '__'
+          files: '["**/deployment.yml"]'
+        env:
+          image: ${{ env.REGISTRY_QA }}/${{ env.IMAGE_NAME }}
+          version: ${{ github.sha }}
+          environment: 'qa'
+
+      - name: Deploy to AKS
+        id: deploy-aks
+        uses: Azure/k8s-deploy@v4
+        with:
+          namespace: 'default'
+          manifests: |
+              k8s/deployment.yml
+          pull-images: false         
+
+
+  push-image-prod:
+
+    needs: deploy-qa
+
+    runs-on: ubuntu-latest
+    environment: PROD
+
+    steps:
+
+      - name: Checkout source code 
+        uses: actions/checkout@v3
+        
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Push build image to PROD
+        run: |                          
+          az acr import --name ${{ env.REGISTRY_PROD }} --source ${{ env.REGISTRY_QA }}/${{ env.IMAGE_NAME }} --image ${{ env.IMAGE_NAME }}
+        working-directory: ./src     
+                
+  deploy-prod:          
     
-        runs-on: ubuntu-latest
-    
-        steps:
-    
-          - name: Checkout source code 
-            uses: actions/checkout@v3
-    
-          - name: Azure Login
-            uses: Azure/login@v1
-            with:
-              creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-          - name: Setup kubectl
-            id: install-kubectl
-            uses: azure/setup-kubectl@v3
-      
-          - uses: azure/use-kubelogin@v1
-            with:
-              kubelogin-version: 'v0.0.31'  
-              
-          - name: Set AKS context
-            id: set-context
-            uses: azure/aks-set-context@v3
-            with:
-              resource-group: '${{ secrets.RG_QA_NAME }}'
-              cluster-name: '${{ secrets.AKS_QA_NAME }}' 
-              admin: false
-              use-kubelogin: true
-              
-          - uses: cschleiden/replace-tokens@v1
-            name: Replace image in deployment
-            with:
-              tokenPrefix: '__'
-              tokenSuffix: '__'
-              files: '["**/deployment.yml"]'
-            env:
-              image: ${{ env.REGISTRY_QA }}/${{ env.IMAGE_NAME }}
-              version: ${{ github.sha }}
-              environment: 'qa'
-    
-          - name: Deploy to AKS
-            id: deploy-aks
-            uses: Azure/k8s-deploy@v4
-            with:
-              namespace: 'default'
-              manifests: |
-                 k8s/deployment.yml
-              pull-images: false         
+    needs: push-image-prod
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout source code 
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup kubectl
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3
+  
+      - uses: azure/use-kubelogin@v1
+        with:
+          kubelogin-version: 'v0.0.31'  
+          
+      - name: Set AKS context
+        id: set-context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: '${{ secrets.RG_PROD_NAME }}'
+          cluster-name: '${{ secrets.AKS_PROD_NAME }}' 
+          admin: false
+          use-kubelogin: true
+          
+      - uses: cschleiden/replace-tokens@v1
+        name: Replace image in deployment
+        with:
+          tokenPrefix: '__'
+          tokenSuffix: '__'
+          files: '["**/deployment.yml"]'
+        env:
+          image: ${{ env.REGISTRY_PROD }}/${{ env.IMAGE_NAME }}
+          version: ${{ github.sha }}
+          environment: 'prod'
+
+      - name: Deploy to AKS
+        id: deploy-aks
+        uses: Azure/k8s-deploy@v4
+        with:
+          namespace: 'default'
+          manifests: |
+              k8s/deployment.yml
+          pull-images: false                 
