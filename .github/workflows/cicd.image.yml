@@ -68,7 +68,7 @@ jobs:
         id: set-context
         uses: azure/aks-set-context@v3
         with:
-          resource-group: 'rg-IntegrationHub'
+          resource-group: '${{ secrets.RG_DEV_NAME }}'
           cluster-name: '${{ secrets.AKS_DEV_NAME }}' 
           admin: false
           use-kubelogin: true
