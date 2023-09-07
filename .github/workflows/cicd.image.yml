@@ -35,13 +35,12 @@ jobs:
       - name: Build docker image
         run: |                          
           echo ${{ secrets.SP_PASSWD }} | docker login ${{ secrets.REGISTRY_SERVER }} --username ${{ secrets.SP_APP_ID }} --password-stdin
-          docker build -t ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }} .
-          docker push ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }}
+          docker build -t ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }} .          
         working-directory: ./src  
     
       - name: Deploy to container registry
         run: |
-          docker push ${{ env.IMAGE_NAME }}
+          docker push ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }}
 
   deploy-dev:          
     
