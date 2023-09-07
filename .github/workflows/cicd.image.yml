@@ -39,3 +39,56 @@ jobs:
       - name: Deploy to container registry
         run: |
           docker push ${{ env.IMAGE_NAME }}
+
+  deploy-dev:          
+    
+    needs: build-node-app-image
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout source code 
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup kubectl
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3
+  
+      - uses: azure/use-kubelogin@v1
+        with:
+          kubelogin-version: 'v0.0.31'  
+          
+      - name: Set AKS context
+        id: set-context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: 'rg-IntegrationHub'
+          cluster-name: '${{ secrets.AKS_DEV_NAME }}' 
+          admin: false
+          use-kubelogin: true
+          
+      - uses: cschleiden/replace-tokens@v1
+        name: Replace image in deployment
+        with:
+          tokenPrefix: '__'
+          tokenSuffix: '__'
+          files: '["**/deployment.yml"]'
+        env:
+          image: ${{ env.IMAGE_NAME }}
+          version: ${{ github.sha }}
+          environment: 'dev'
+
+      - name: Deploy to AKS
+        id: deploy-aks
+        uses: Azure/k8s-deploy@v4
+        with:
+          namespace: 'default'
+          manifests: |
+             k8s/deployment.yml
+          pull-images: false               
