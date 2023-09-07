@@ -4,7 +4,10 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: ${{ secrets.REGISTRY_SERVER }}/nodeappdemo:${{ github.sha }}
+  IMAGE_NAME: nodeappdemo:${{ github.sha }}
+  REGISTRY_DEV: '${{ secrets.acrDevName }}.azurecr.io'
+  REGISTRY_QA: '${{ secrets.acrQaName }}.azurecr.io'
+  REGISTRY_PROD: '${{ secrets.acrProdName }}.azurecr.io'
 
 jobs:
   build-node-app-image:
@@ -32,7 +35,7 @@ jobs:
       - name: Build docker image
         run: |                          
           docker login ${{ secrets.REGISTRY_SERVER }} --username ${{ secrets.SP_APP_ID }} --password ${{ secrets.SP_PASSWD }}
-          docker build -t ${{ env.IMAGE_NAME }} .
+          docker build -t ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }} .
           docker push ${{ env.IMAGE_NAME }}
         working-directory: ./src  
     
@@ -45,6 +48,7 @@ jobs:
     needs: build-node-app-image
 
     runs-on: ubuntu-latest
+    environment: DEV
 
     steps:
 
@@ -91,4 +95,21 @@ jobs:
           namespace: 'default'
           manifests: |
              k8s/deployment.yml
-          pull-images: false               
+          pull-images: false 
+          
+  deploy-qa:
+     
+    needs: deploy-dev
+
+    runs-on: ubuntu-latest
+    environment: QA
+
+    steps:
+
+      - name: Checkout source code 
+        uses: actions/checkout@v3
+        
+      - name: Push build image to QA
+        run: |                          
+          az acr import --name ${{ env.REGISTRY_QA }} --source ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }} --image ${{ env.IMAGE_NAME }}
+        working-directory: ./src        
