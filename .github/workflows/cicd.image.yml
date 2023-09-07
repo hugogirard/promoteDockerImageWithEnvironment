@@ -5,9 +5,9 @@ on:
 
 env:
   IMAGE_NAME: nodeappdemo:${{ github.sha }}
-  REGISTRY_DEV: '${{ secrets.acrDevName }}.azurecr.io'
-  REGISTRY_QA: '${{ secrets.acrQaName }}.azurecr.io'
-  REGISTRY_PROD: '${{ secrets.acrProdName }}.azurecr.io'
+  REGISTRY_DEV: '${{ secrets.ACR_DEV_NAME }}.azurecr.io'
+  REGISTRY_QA: '${{ secrets.ACR_QA_NAME }}.azurecr.io'
+  REGISTRY_PROD: '${{ secrets.ACR_PROD_NAME }}.azurecr.io'
 
 jobs:
   build-node-app-image:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Build docker image
         run: |                          
-          docker login ${{ secrets.REGISTRY_SERVER }} --username ${{ secrets.SP_APP_ID }} --password ${{ secrets.SP_PASSWD }}
+          docker login ${{ secrets.REGISTRY_SERVER }} --username ${{ secrets.SP_APP_ID }} --password-stdin ${{ secrets.SP_PASSWD }}
           docker build -t ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }} .
           docker push ${{ env.IMAGE_NAME }}
         working-directory: ./src  
