@@ -48,3 +48,34 @@ This is what the bicep template will create
 
 Now you can build and deploy the docker image to the Azure Container Registry in Development.  Just run the GitHub workflow called **Deploy on Kubernetes**
 
+One the image is built and deployed in DEV environment you will need to approve to be deployed in QA environment.
+
+![Architecture](./diagram/dev.png)
+
+If you go in the Azure Portal, in the AKS for the Dev environment you will see the service called **svc-nodeapp-demo**
+
+![Architecture](./diagram/service.png)
+
+Click on the External IP hyperlink.
+
+![Architecture](./diagram/builddev.png)
+
+Here you see the environment and the version of the image deployed.  In this case we use the GitHub SHA that correspond to the commit number.
+
+Now you can approve the deployment in QA environment.
+
+![Architecture](./diagram/approve.png)
+
+This will just copy the docker image in dev with the version in QA.  The image won't be build again since we want to keep the same version number and no needs to rebuild the image.
+
+Now, go to the QA AKS cluster and get the External IP of the service.
+
+![Architecture](./diagram/qa.png)
+
+You can see that the version is the same as the DEV environment.
+
+Now, repeat the same step than before for QA for the Production Environment.
+
+![Architecture](./diagram/prod.png)
+
+Again, here in production the image was copied from QA to production without been rebuild so the version number is the same.
