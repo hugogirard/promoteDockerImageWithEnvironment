@@ -27,7 +27,7 @@ jobs:
               
       - name: Build docker image
         run: |                          
-          echo ${{ secrets.SP_PASSWD }} | docker login ${{ secrets.REGISTRY_SERVER }} --username ${{ secrets.SP_APP_ID }} --password-stdin
+          echo ${{ secrets.SP_PASSWD }} | docker login ${{ secrets.REGISTRY_SERVER }} --username ${{ secrets.SP_CLIENT_ID }} --password-stdin
           docker build -t ${{ env.REGISTRY_DEV }}/${{ env.IMAGE_NAME }} .          
         working-directory: ./src  
     
