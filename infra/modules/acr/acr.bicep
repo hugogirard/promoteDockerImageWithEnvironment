@@ -1,5 +1,6 @@
 param location string
 param suffix string
+@minLength(3)
 param env string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
